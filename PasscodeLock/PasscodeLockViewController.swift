@@ -89,7 +89,6 @@ open class PasscodeLockViewController: UIViewController, PasscodeLockTypeDelegat
         deleteSignButton?.setTitle(localizedStringFor(key: "PasscodeLockDeleteButtonTitle", comment: "Delete Button Title"), for: .normal)
 
         setupEvents()
-
     }
 
     open override func viewDidAppear(_ animated: Bool) {
