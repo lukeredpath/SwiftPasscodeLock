@@ -92,10 +92,6 @@ open class PasscodeLockViewController: UIViewController, PasscodeLockTypeDelegat
 
     }
 
-    open override func viewWillAppear(_ animated: Bool) {
-        UIAccessibility.post(notification: .screenChanged, argument: nil)
-    }
-
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
