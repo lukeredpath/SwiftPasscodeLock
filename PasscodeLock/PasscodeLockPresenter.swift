@@ -58,6 +58,7 @@ open class PasscodeLockPresenter {
         }
         
         passcodeLockWindow.rootViewController = passcodeLockVC
+        passcodeLockWindow.accessibilityViewIsModal = true
     }
 
     open func dismiss(animated: Bool = true) {

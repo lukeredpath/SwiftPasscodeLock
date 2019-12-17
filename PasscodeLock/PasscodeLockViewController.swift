@@ -89,6 +89,11 @@ open class PasscodeLockViewController: UIViewController, PasscodeLockTypeDelegat
         deleteSignButton?.setTitle(localizedStringFor(key: "PasscodeLockDeleteButtonTitle", comment: "Delete Button Title"), for: .normal)
 
         setupEvents()
+
+    }
+
+    open override func viewWillAppear(_ animated: Bool) {
+        UIAccessibility.post(notification: .screenChanged, argument: nil)
     }
 
     open override func viewDidAppear(_ animated: Bool) {
