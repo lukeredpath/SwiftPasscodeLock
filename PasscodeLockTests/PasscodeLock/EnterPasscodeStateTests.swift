@@ -94,22 +94,23 @@ class EnterPasscodeStateTests: XCTestCase {
         passcodeState.accept(passcode: "0", from: passcodeLock)
         
         XCTAssertEqual(observer.called, true, "Should send a notificaiton when the maximum number of incorrect attempts is reached")
+        
+        let currentState = passcodeLock.state as! EnterPasscodeState
+        XCTAssertTrue(currentState.isNotificationSent)
     }
     
-    func testIncorrectPasscodeSendNotificationOnce() {
+    func testIncorrectPasscodeDoesNotTriggerNotificationIfAlreadySent() {
         
         let observer = NotificaionObserver()
 
         observer.observe(notification: PasscodeLockIncorrectPasscodeNotification)
         
-        passcodeState.accept(passcode: "0", from: passcodeLock)
-        passcodeState.accept(passcode: "0", from: passcodeLock)
-        passcodeState.accept(passcode: "0", from: passcodeLock)
+        passcodeState = EnterPasscodeState(allowCancellation: true, incorrectPasscodeAttempts: 2, notifiedMaximumAttempts: true)
         
         passcodeState.accept(passcode: "0", from: passcodeLock)
         passcodeState.accept(passcode: "0", from: passcodeLock)
         passcodeState.accept(passcode: "0", from: passcodeLock)
-
-        XCTAssertEqual(observer.callCounter, 1, "Should send the notification only once")
+        
+        XCTAssertEqual(observer.callCounter, 0)
     }
 }

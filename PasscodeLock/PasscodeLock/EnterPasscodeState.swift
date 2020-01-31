@@ -26,42 +26,50 @@ struct EnterPasscodeState: PasscodeLockStateType {
             UserDefaults.standard.set(newValue, forKey: incorrectPasscodeAttemptsKey)
         }
     }
-    fileprivate var isNotificationSent = false
+    var isNotificationSent = false
     
-    init(allowCancellation: Bool = false) {
+    init(allowCancellation: Bool = false, incorrectPasscodeAttempts: Int = 0, notifiedMaximumAttempts: Bool = false) {
         
         isCancellableAction = allowCancellation
         title = localizedStringFor(key: "PasscodeLockEnterTitle", comment: "Enter passcode title")
         description = localizedStringFor(key: "PasscodeLockEnterDescription", comment: "Enter passcode description")
+        isNotificationSent = notifiedMaximumAttempts
+        
+        self.incorrectPasscodeAttempts = incorrectPasscodeAttempts
     }
     
-    mutating func accept(passcode: String, from lock: PasscodeLockType) {
+    func accept(passcode: String, from lock: PasscodeLockType) {
         lock.repository.check(passcode: passcode) { result in
             if result {
+                lock.changeState(self.successful())
                 lock.delegate?.passcodeLockDidSucceed(lock)
                 
-                incorrectPasscodeAttempts = 0
-                
             } else {
-                
-                incorrectPasscodeAttempts += 1
-                
-                if incorrectPasscodeAttempts >= lock.configuration.maximumInccorectPasscodeAttempts {
-                    
-                    postNotification()
-                }
-                
+
+                lock.changeState(self.failedAttempted(
+                    attemptNumber: self.incorrectPasscodeAttempts + 1,
+                    maximumPermittedAttempts: lock.configuration.maximumInccorectPasscodeAttempts
+                ))
                 lock.delegate?.passcodeLockDidFail(lock)
             }
         }
     }
     
-    fileprivate mutating func postNotification() {
+    fileprivate func successful() -> PasscodeLockStateType {
+        return EnterPasscodeState(allowCancellation: isCancellableAction, incorrectPasscodeAttempts: 0)
+    }
+    
+    fileprivate func failedAttempted(attemptNumber: Int, maximumPermittedAttempts: Int) -> PasscodeLockStateType {
+        var notifiedMaximumAttempts = isNotificationSent
         
-        guard !isNotificationSent else { return }
-        
-        NotificationCenter.default.post(name: PasscodeLockIncorrectPasscodeNotification, object: nil)
-        
-        isNotificationSent = true
+        if attemptNumber >= maximumPermittedAttempts && !notifiedMaximumAttempts {
+            NotificationCenter.default.post(name: PasscodeLockIncorrectPasscodeNotification, object: nil)
+            notifiedMaximumAttempts = true
+        }
+        return EnterPasscodeState(
+            allowCancellation: isCancellableAction,
+            incorrectPasscodeAttempts: attemptNumber,
+            notifiedMaximumAttempts: notifiedMaximumAttempts
+        )
     }
 }

@@ -35,10 +35,10 @@ struct ConfirmPasscodeState: PasscodeLockStateType {
             
             let mismatchTitle = localizedStringFor(key: "PasscodeLockMismatchTitle", comment: "Passcode mismatch title")
             let mismatchDescription = localizedStringFor(key: "PasscodeLockMismatchDescription", comment: "Passcode mismatch description")
+
+            lock.delegate?.passcodeLockDidFail(lock)
             
             lock.changeState(SetPasscodeState(title: mismatchTitle, description: mismatchDescription))
-            
-            lock.delegate?.passcodeLockDidFail(lock)
         }
     }
 }
