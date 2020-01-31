@@ -8,11 +8,13 @@
 
 import Foundation
 
+public typealias PasscodeCheckHandler = (Bool) -> ()
+
 public protocol PasscodeRepositoryType {
     
     var hasPasscode: Bool { get }
     
     func save(passcode: String)
-    func check(passcode: String) -> Bool
+    func check(passcode: String, handler: PasscodeCheckHandler)
     func delete()
 }

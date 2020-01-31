@@ -41,8 +41,8 @@ class UserDefaultsPasscodeRepository: PasscodeRepositoryType {
         defaults.synchronize()
     }
     
-    func check(passcode: String) -> Bool {
-        return self.passcode == passcode
+    func check(passcode: String, handler: PasscodeCheckHandler) {
+        handler(self.passcode == passcode)
     }
     
     func delete() {

@@ -36,22 +36,23 @@ struct EnterPasscodeState: PasscodeLockStateType {
     }
     
     mutating func accept(passcode: String, from lock: PasscodeLockType) {
-        if lock.repository.check(passcode: passcode) {
-        
-            lock.delegate?.passcodeLockDidSucceed(lock)
-            
-            incorrectPasscodeAttempts = 0
-        
-        } else {
-        
-            incorrectPasscodeAttempts += 1
-        
-            if incorrectPasscodeAttempts >= lock.configuration.maximumInccorectPasscodeAttempts {
-            
-                postNotification()
+        lock.repository.check(passcode: passcode) { result in
+            if result {
+                lock.delegate?.passcodeLockDidSucceed(lock)
+                
+                incorrectPasscodeAttempts = 0
+                
+            } else {
+                
+                incorrectPasscodeAttempts += 1
+                
+                if incorrectPasscodeAttempts >= lock.configuration.maximumInccorectPasscodeAttempts {
+                    
+                    postNotification()
+                }
+                
+                lock.delegate?.passcodeLockDidFail(lock)
             }
-        
-            lock.delegate?.passcodeLockDidFail(lock)
         }
     }
     
