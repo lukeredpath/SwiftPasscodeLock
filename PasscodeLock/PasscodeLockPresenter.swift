@@ -16,7 +16,7 @@ open class PasscodeLockPresenter {
         
     fileprivate let passcodeConfiguration: PasscodeLockConfigurationType
     open var isPasscodePresented = false
-    open let passcodeLockVC: PasscodeLockViewController
+    public let passcodeLockVC: PasscodeLockViewController
     
     public init(mainWindow window: UIWindow?, configuration: PasscodeLockConfigurationType, viewController: PasscodeLockViewController) {
         
@@ -77,7 +77,7 @@ open class PasscodeLockPresenter {
             delay: 0,
             usingSpringWithDamping: 1,
             initialSpringVelocity: 0,
-            options: UIViewAnimationOptions(),
+            options: UIView.AnimationOptions(),
             animations: { [weak self] in
                 
                 self?.passcodeLockWindow.alpha = 0
@@ -92,8 +92,8 @@ open class PasscodeLockPresenter {
     }
 
     fileprivate func moveWindowsToFront() {
-        let windowLevel = UIApplication.shared.windows.last?.windowLevel ?? UIWindowLevelNormal
-        let maxWinLevel = max(windowLevel, UIWindowLevelNormal)
+        let windowLevel = UIApplication.shared.windows.last?.windowLevel ?? UIWindow.Level.normal
+        let maxWinLevel = max(windowLevel, UIWindow.Level.normal)
         passcodeLockWindow.windowLevel =  maxWinLevel + 1
     }
 }

@@ -12,7 +12,7 @@ import LocalAuthentication
 open class PasscodeLock: PasscodeLockType {
     
     open weak var delegate: PasscodeLockTypeDelegate?
-    open let configuration: PasscodeLockConfigurationType
+    public let configuration: PasscodeLockConfigurationType
     
     open var repository: PasscodeRepositoryType {
         return configuration.repository
@@ -40,9 +40,9 @@ open class PasscodeLock: PasscodeLockType {
     open func addSign(_ sign: String) {
         
         passcode.append(sign)
-        delegate?.passcodeLock(self, addedSignAt: passcode.characters.count - 1)
+        delegate?.passcodeLock(self, addedSignAt: passcode.count - 1)
         
-        if passcode.characters.count >= configuration.passcodeLength {
+        if passcode.count >= configuration.passcodeLength {
             
             lockState.accept(passcode: passcode, from: self)
             passcode.removeAll(keepingCapacity: true)
@@ -51,7 +51,7 @@ open class PasscodeLock: PasscodeLockType {
     
     open func removeSign() {
         
-        guard passcode.characters.count > 0 else { return }
+        guard passcode.count > 0 else { return }
         passcode.remove(at: passcode.index(before: passcode.endIndex))
         //passcode.removeLast()
         delegate?.passcodeLock(self, removedSignAt: passcode.utf8.count)
